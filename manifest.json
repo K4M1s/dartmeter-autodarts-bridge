@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "DartMeter ↔ autodarts bridge",
+  "version": "0.1.0",
+  "description": "Forwards camera-detected throws from your play.autodarts.io session into DartMeter. Rides your existing autodarts login — no passwords, no tokens stored.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "https://play.autodarts.io/*",
+    "https://*.autodarts.io/*",
+    "https://dartmeter.com/*"
+  ],
+  "background": { "service_worker": "src/background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://play.autodarts.io/*", "https://*.autodarts.io/*"],
+      "js": ["src/shared.js", "src/content-autodarts.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://dartmeter.com/*"],
+      "js": ["src/shared.js", "src/content-dartmeter.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/inject-autodarts.js"],
+      "matches": ["https://play.autodarts.io/*", "https://*.autodarts.io/*"]
+    }
+  ]
+}

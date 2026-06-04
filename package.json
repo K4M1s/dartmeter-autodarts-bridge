@@ -1,0 +1,11 @@
+{
+  "name": "dartmeter-autodarts-bridge",
+  "version": "0.1.0",
+  "description": "Browser extension that forwards autodarts.io camera-detected throws into DartMeter.",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/K4M1s/dartmeter-autodarts-bridge",
+  "scripts": {
+    "check": "for f in src/*.js; do node --check \"$f\"; done && node -e \"JSON.parse(require('fs').readFileSync('manifest.json','utf8'))\""
+  }
+}
