@@ -15,5 +15,8 @@ self.DM_BRIDGE = {
   HEARTBEAT_GAP_MS: 12_000,
   // How often the page-context script re-announces a live socket.
   HEARTBEAT_MS: 5_000,
+  // Where the DartMeter app runs. Must stay in sync with the dartmeter
+  // content-script matches in manifest.json.
+  DARTMETER_MATCHES: ['https://dartmeter.com/*'],
   VERSION: '0.1.0', // x-release-please-version
 };

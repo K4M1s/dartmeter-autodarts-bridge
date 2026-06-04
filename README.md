@@ -75,6 +75,20 @@ bridges them. DartMeter shows a connection indicator in Settings.
 - This project is unaffiliated with autodarts.
 - Firefox port is untested (MV3 service-worker + `chrome.*` APIs).
 
+## Debugging
+
+Verbose logging is **off by default**. To enable it:
+
+- On **play.autodarts.io** and **dartmeter.com** (page consoles):
+  `localStorage.setItem('dm-bridge-debug', '1')` — then reload. Logs are prefixed
+  `[dm-bridge][autodarts]`, `[dm-bridge][content-ad]`, `[dm-bridge][content-dm]`.
+- In the **service worker** console (`chrome://extensions` → this extension →
+  *service worker*): `chrome.storage.local.set({ dmBridgeDebug: true })`. Logs are
+  prefixed `[dm-bridge][bg]`.
+
+The autodarts page log dumps **every raw WS frame** (`raw frame …`), which is how
+you confirm the real field names during bring-up.
+
 ## Releases
 
 Versioning and changelog are automated with

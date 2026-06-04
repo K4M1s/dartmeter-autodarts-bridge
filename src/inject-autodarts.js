@@ -13,8 +13,22 @@
   const VERSION = '0.1.0'; // x-release-please-version
   const SUBSCRIBE_MATCH = 'ms/v0/subscribe';
 
+  // Debug logging, off unless the user opts in on the autodarts.io page:
+  //   localStorage.setItem('dm-bridge-debug', '1')
+  function debug(...args) {
+    try {
+      if (window.localStorage.getItem('dm-bridge-debug')) {
+        console.log('[dm-bridge][autodarts]', ...args);
+      }
+    } catch {
+      // localStorage may be blocked — never throw from logging.
+    }
+  }
+
   const OrigWS = window.WebSocket;
   if (!OrigWS || OrigWS.__dmWrapped) return;
+
+  debug('WebSocket wrap installed');
 
   let throwSeq = 0;
   let lastThrowKey = '';
@@ -33,9 +47,12 @@
     if (!seg) return;
     const c = last.coords || {};
     const key = `${throws.length}:${seg.name}:${seg.number}:${seg.multiplier}:${c.x},${c.y}`;
-    if (key === lastThrowKey) return;
+    if (key === lastThrowKey) {
+      debug('throw frame (duplicate, skipped)', key);
+      return;
+    }
     lastThrowKey = key;
-    emit('throw', {
+    const payload = {
       segment: {
         name: seg.name,
         number: seg.number,
@@ -45,19 +62,25 @@
       coords: c.x != null ? { x: c.x, y: c.y } : undefined,
       throwId: `${throws.length}#${key}`,
       seq: throwSeq++,
-    });
+    };
+    debug('emit throw', payload);
+    emit('throw', payload);
   }
 
   // All access to the (private, unversioned) autodarts frame shape is isolated
   // here. If autodarts renames fields, only this function needs updating, and a
   // throw never escapes to break the socket.
   function handleFrame(msg) {
+    // Log every raw frame so the (private, unversioned) schema can be inspected
+    // live during bring-up. Behind the debug flag — verbose by design.
+    debug('raw frame', msg);
     if (!msg || typeof msg !== 'object') return;
     const channel = typeof msg.channel === 'string' ? msg.channel : '';
     const data = msg.data;
     if (!data || typeof data !== 'object') return;
 
     if (channel.includes('boards') && typeof data.event === 'string') {
+      debug('board-event', data.event, 'channel', channel);
       emit('board-event', { event: data.event });
       if (data.event === 'Takeout started' || data.event === 'Manual reset') {
         lastThrowKey = '';
@@ -72,6 +95,8 @@
     } else if (Array.isArray(data.turns) && data.turns.length) {
       const turn = data.turns[data.turns.length - 1];
       if (turn && Array.isArray(turn.throws)) handleThrows(turn.throws);
+    } else {
+      debug('unhandled frame shape (no board event / throws / turns)', { channel, keys: Object.keys(data) });
     }
   }
 
@@ -79,21 +104,25 @@
     const ws = protocols === undefined ? new OrigWS(url) : new OrigWS(url, protocols);
     try {
       if (String(url).includes(SUBSCRIBE_MATCH)) {
+        debug('subscribe socket detected', String(url));
         let heartbeat;
         const announce = () => emit('ready', { version: VERSION });
         ws.addEventListener('open', () => {
+          debug('subscribe socket open');
           announce();
           heartbeat = setInterval(announce, HEARTBEAT_MS);
         });
         ws.addEventListener('message', (ev) => {
           try {
             handleFrame(JSON.parse(ev.data));
-          } catch {
+          } catch (err) {
             // Non-JSON or unexpected shape — ignore, never throw.
+            debug('frame parse error (ignored)', err);
           }
         });
         const stop = () => {
           if (heartbeat) clearInterval(heartbeat);
+          debug('subscribe socket closed');
         };
         ws.addEventListener('close', stop);
         ws.addEventListener('error', stop);

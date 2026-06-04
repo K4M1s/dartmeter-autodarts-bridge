@@ -5,7 +5,21 @@
   const { EXT_SOURCE, APP_SOURCE } = self.DM_BRIDGE;
   const origin = location.origin;
 
+  // Debug logging, off unless: localStorage.setItem('dm-bridge-debug', '1')
+  function debug(...args) {
+    try {
+      if (window.localStorage.getItem('dm-bridge-debug')) {
+        console.log('[dm-bridge][content-dm]', ...args);
+      }
+    } catch {
+      // never throw from logging
+    }
+  }
+
+  debug('content script active on', origin);
+
   function postToPage(type, payload) {
+    debug('post -> page', type, payload);
     window.postMessage({ source: EXT_SOURCE, type, payload }, origin);
   }
 
@@ -21,6 +35,7 @@
     if (e.source !== window || e.origin !== origin) return;
     const data = e.data;
     if (!data || data.source !== APP_SOURCE || data.type !== 'hello') return;
+    debug('app hello received -> querying readiness');
     try {
       chrome.runtime.sendMessage({ type: 'query-ready' }).then((res) => {
         if (res && res.ready) postToPage('ready', { version: self.DM_BRIDGE.VERSION });
