@@ -11,8 +11,10 @@ self.DM_BRIDGE = {
   APP_SOURCE: 'dartmeter-app',
   // Internal tag for page-context -> isolated-world messages on autodarts.io.
   INJECT_SOURCE: '__dm_ad_inject__',
-  // Drop "connected" after this much silence (must match the app's heartbeat gap).
-  HEARTBEAT_GAP_MS: 12_000,
+  // Treat a cached "ready" as fresh within this window (handshake). Must exceed
+  // Chrome's hidden-tab timer throttle (~60s) so the heartbeat from a
+  // backgrounded autodarts tab still counts. Matches the app's heartbeat gap.
+  HEARTBEAT_GAP_MS: 90_000,
   // How often the page-context script re-announces a live socket.
   HEARTBEAT_MS: 5_000,
   // Where the DartMeter app runs. Must stay in sync with the dartmeter
