@@ -30,7 +30,7 @@ jobs:
       - name: Package extension zip
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          zip -r "dartmeter-autodarts-bridge-${{ steps.release.outputs.tag_name }}.zip" \
+          zip -r "dartmeter-autodarts-bridge-v${{ steps.release.outputs.version }}.zip" \
             manifest.json src LICENSE README.md
 
       - name: Attach zip to release
