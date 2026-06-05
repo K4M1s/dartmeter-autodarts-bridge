@@ -1,9 +1,12 @@
-# DartMeter ↔ autodarts bridge
+# DartMeter Bridge for autodarts
 
 A small, open-source browser extension that forwards camera-detected dart
 throws from your [play.autodarts.io](https://play.autodarts.io) session into
 [DartMeter](https://dartmeter.com), so you can use DartMeter's game modes with
 autodarts' camera scoring.
+
+> Unaffiliated with autodarts. "autodarts" is used only to describe what this
+> extension is compatible with.
 
 It is published as a **separate, auditable repo on purpose**: the extension is
 the only piece that touches your autodarts session, so you can read exactly what
@@ -61,7 +64,16 @@ bridges them. DartMeter shows a connection indicator in Settings.
    mode**.
 3. **Load unpacked** → select this folder.
 4. Open `https://play.autodarts.io` (logged in) and `https://dartmeter.com` in
-   the same browser.
+   the same browser. For local development, `http://localhost` and
+   `http://127.0.0.1` (any port, e.g. the `npm run dev` server on `:3000`) work
+   too.
+
+> **Note on localhost permissions.** The committed `manifest.json` keeps
+> `http://localhost/*` and `http://127.0.0.1/*` host permissions so unpacked
+> local development works out of the box. The **published Chrome Web Store
+> build strips them** — `npm run build:store` writes a cleaned `dist/manifest.json`
+> (localhost removed) that is what gets zipped and uploaded. The release workflow
+> runs this automatically; the unpacked folder you load for dev is unaffected.
 5. In DartMeter → Settings → **Camera scoring (autodarts)** → On. It should show
    **Connected**.
 
@@ -96,9 +108,19 @@ Versioning and changelog are automated with
 **must** follow [Conventional Commits](https://www.conventionalcommits.org)
 (`feat:` → minor bump, `fix:` → patch). release-please opens a release PR; merging
 it tags the version, publishes a GitHub Release, and the workflow attaches a
-packaged `dartmeter-autodarts-bridge-<tag>.zip` (build = zip of the static files;
-no bundler). The version is kept in sync across `package.json`, `manifest.json`,
+packaged `dartmeter-autodarts-bridge-<tag>.zip`. The zip is built by
+`npm run build:store` (`scripts/build-store.mjs`), which copies the static files
+into `dist/` and strips the localhost host permissions from the manifest — there
+is no bundler. The version is kept in sync across `package.json`, `manifest.json`,
 and the `VERSION` constants in `src/shared.js` + `src/inject-autodarts.js`.
+
+That release zip is the artifact uploaded to the Chrome Web Store dashboard.
+
+## Privacy
+
+The extension's data handling is described in the [Trust model](#trust-model--what-it-does-and-does-not-do)
+section above. The hosted privacy policy required by the Chrome Web Store lives at
+<https://dartmeter.com/extension-privacy>.
 
 ## License
 
