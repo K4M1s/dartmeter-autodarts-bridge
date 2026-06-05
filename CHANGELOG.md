@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.1.0...v0.2.0) (2026-06-05)
+
+
+### Features
+
+* add flag-gated debug logging for live bring-up ([db839a5](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/db839a59951bd479cb6a340a5069a4dfebbca140))
+* drive visit detection off in-order board-manager socket ([e619df1](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/e619df1451ab16d4a66dcee47498a22a995aa12a))
+
+
+### Bug Fixes
+
+* widen connection gap past hidden-tab timer throttle ([637940e](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/637940e0a9c82d4c535f8aa0e9abe931165f08fe))
+
 ## [0.1.0](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.1.0...v0.1.0) (2026-06-04)
 
 
