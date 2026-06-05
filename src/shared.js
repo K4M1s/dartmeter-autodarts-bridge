@@ -18,7 +18,12 @@ self.DM_BRIDGE = {
   // How often the page-context script re-announces a live socket.
   HEARTBEAT_MS: 5_000,
   // Where the DartMeter app runs. Must stay in sync with the dartmeter
-  // content-script matches in manifest.json.
-  DARTMETER_MATCHES: ['https://dartmeter.com/*'],
+  // content-script matches in manifest.json. localhost/127.0.0.1 cover local
+  // dev (`npm run dev` on :3000); Chrome match patterns ignore the port.
+  DARTMETER_MATCHES: [
+    'https://dartmeter.com/*',
+    'http://localhost/*',
+    'http://127.0.0.1/*',
+  ],
   VERSION: '0.1.0', // x-release-please-version
 };

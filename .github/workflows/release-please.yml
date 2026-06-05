@@ -27,11 +27,16 @@ jobs:
           for f in src/*.js; do node --check "$f"; done
           node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8'))"
 
+      - name: Build store package (strips localhost host permissions)
+        if: ${{ steps.release.outputs.release_created }}
+        run: node scripts/build-store.mjs
+
       - name: Package extension zip
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          zip -r "dartmeter-autodarts-bridge-v${{ steps.release.outputs.version }}.zip" \
-            manifest.json src LICENSE README.md
+          cd dist
+          zip -r "../dartmeter-autodarts-bridge-v${{ steps.release.outputs.version }}.zip" \
+            manifest.json src icons LICENSE README.md
 
       - name: Attach zip to release
         if: ${{ steps.release.outputs.release_created }}
