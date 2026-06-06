@@ -53,11 +53,13 @@ bridges them. DartMeter shows a connection indicator in Settings.
 | --- | --- | --- |
 | `src/inject-autodarts.js` | autodarts.io **page** context | Wraps `WebSocket`, parses throw/board frames, dedupes repeated frames |
 | `src/content-autodarts.js` | autodarts.io isolated world | Injects the page script, relays its messages to the background |
-| `src/background.js` | service worker | Fans out throws to dartmeter tab(s); caches last “ready” for handshake |
+| `src/background.js` | service worker (Chrome) / event page (Firefox) | Fans out throws to dartmeter tab(s); caches last “ready” for handshake |
 | `src/content-dartmeter.js` | dartmeter.com isolated world | Posts throws into the page with the page origin; answers the app handshake |
 | `src/shared.js` | both isolated worlds | Shared constants (mirrored in DartMeter’s `lib/autodarts.ts`) |
 
 ## Install (unpacked)
+
+### Chrome / Edge
 
 1. Clone this repo.
 2. Open `chrome://extensions` (or `edge://extensions`), enable **Developer
@@ -70,12 +72,28 @@ bridges them. DartMeter shows a connection indicator in Settings.
 
 > **Note on localhost permissions.** The committed `manifest.json` keeps
 > `http://localhost/*` and `http://127.0.0.1/*` host permissions so unpacked
-> local development works out of the box. The **published Chrome Web Store
-> build strips them** — `npm run build:store` writes a cleaned `dist/manifest.json`
-> (localhost removed) that is what gets zipped and uploaded. The release workflow
-> runs this automatically; the unpacked folder you load for dev is unaffected.
+> local development works out of the box. The **published store builds strip
+> them** — `npm run build:store` writes cleaned manifests into `dist/chrome/`
+> and `dist/firefox/` (localhost removed) that are what get zipped and uploaded.
+> The release workflow runs this automatically; the unpacked folder you load
+> for dev is unaffected.
 5. In DartMeter → Settings → **Camera scoring (autodarts)** → On. It should show
    **Connected**.
+
+### Firefox
+
+`manifest.json` is Chrome-shaped (background service worker), which Firefox does
+not run. Build the Firefox package first, then load it temporarily:
+
+1. `npm run build:store` — produces `dist/firefox/` (background event page +
+   `browser_specific_settings.gecko`).
+2. Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** →
+   pick `dist/firefox/manifest.json`. (Or `npm run run:firefox` to launch a
+   throwaway Firefox profile with the add-on loaded.)
+3. Open the two tabs and toggle the DartMeter setting as above.
+
+> Temporary add-ons are removed when Firefox restarts. A permanent install comes
+> from the signed AMO listing (see [Releases](#releases)).
 
 ## Status & caveats
 
@@ -85,7 +103,11 @@ bridges them. DartMeter shows a connection indicator in Settings.
   back to manual input; the fix is localized to `handleFrame` in
   `inject-autodarts.js`.
 - This project is unaffiliated with autodarts.
-- Firefox port is untested (MV3 service-worker + `chrome.*` APIs).
+- Chrome and Firefox are both supported from a single source tree. The extension
+  API is accessed through `globalThis.browser ?? globalThis.chrome` so the
+  promise-based calls work on Firefox (where bare `chrome.*` is callback-only),
+  and `npm run build:store` emits a Firefox-shaped manifest (event-page
+  background + `browser_specific_settings.gecko`).
 
 ## Debugging
 
@@ -107,14 +129,20 @@ Versioning and changelog are automated with
 [release-please](https://github.com/googleapis/release-please). Commits on `main`
 **must** follow [Conventional Commits](https://www.conventionalcommits.org)
 (`feat:` → minor bump, `fix:` → patch). release-please opens a release PR; merging
-it tags the version, publishes a GitHub Release, and the workflow attaches a
-packaged `dartmeter-autodarts-bridge-<tag>.zip`. The zip is built by
+it tags the version, publishes a GitHub Release, and the workflow attaches the
+packaged `dartmeter-autodarts-bridge-chrome-<tag>.zip` and
+`dartmeter-autodarts-bridge-firefox-<tag>.zip`. The zips are built by
 `npm run build:store` (`scripts/build-store.mjs`), which copies the static files
-into `dist/` and strips the localhost host permissions from the manifest — there
-is no bundler. The version is kept in sync across `package.json`, `manifest.json`,
-and the `VERSION` constants in `src/shared.js` + `src/inject-autodarts.js`.
+into `dist/chrome/` + `dist/firefox/` and strips the localhost host permissions
+from each manifest — there is no bundler. The version is kept in sync across
+`package.json`, `manifest.json`, and the `VERSION` constants in `src/shared.js` +
+`src/inject-autodarts.js`.
 
-That release zip is the artifact uploaded to the Chrome Web Store dashboard.
+The Chrome zip is uploaded to the Chrome Web Store dashboard. The Firefox zip is
+listed on [addons.mozilla.org](https://addons.mozilla.org); the release workflow
+also runs `web-ext lint` on it, and submits it to AMO automatically when the
+`AMO_API_KEY` / `AMO_API_SECRET` repo secrets are configured (otherwise you can
+run `npm run sign:firefox` locally with those credentials in the environment).
 
 ## Privacy
 

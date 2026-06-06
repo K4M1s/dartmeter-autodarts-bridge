@@ -4,6 +4,8 @@
 // 2. Relays the page-context envelopes to the background service worker.
 (() => {
   const { INJECT_SOURCE } = self.DM_BRIDGE;
+  // Promise-returning extension API namespace (browser.* on Firefox, chrome.* on Chrome).
+  const api = globalThis.browser ?? globalThis.chrome;
 
   // Debug logging, off unless: localStorage.setItem('dm-bridge-debug', '1')
   function debug(...args) {
@@ -17,7 +19,7 @@
   }
 
   const script = document.createElement('script');
-  script.src = chrome.runtime.getURL('src/inject-autodarts.js');
+  script.src = api.runtime.getURL('src/inject-autodarts.js');
   script.onload = () => script.remove();
   (document.head || document.documentElement).prepend(script);
   debug('injected page script', script.src);
@@ -30,7 +32,7 @@
     // Forward { type, payload } to the background relay. Tolerate the worker
     // being asleep (sendMessage may reject); it will wake on the next event.
     try {
-      chrome.runtime
+      api.runtime
         .sendMessage({ type: data.type, payload: data.payload })
         .catch(() => {});
     } catch {
