@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.2.0...v0.3.0) (2026-06-06)
+
+
+### Features
+
+* support firefox ([a1037c8](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/a1037c8873da01c153b25b3c1db337c6c179e1c6))
+* support firefox ([d7d7ce0](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/d7d7ce0b223c197db78fe8bd2d235656c175be60))
+
 ## [0.2.0](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.1.0...v0.2.0) (2026-06-05)
 
 
