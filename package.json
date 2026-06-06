@@ -7,6 +7,12 @@
   "homepage": "https://github.com/K4M1s/dartmeter-autodarts-bridge",
   "scripts": {
     "check": "for f in src/*.js scripts/*.mjs; do node --check \"$f\"; done && node -e \"JSON.parse(require('fs').readFileSync('manifest.json','utf8'))\"",
-    "build:store": "node scripts/build-store.mjs"
+    "build:store": "node scripts/build-store.mjs",
+    "lint:firefox": "web-ext lint -s dist/firefox",
+    "run:firefox": "web-ext run -s dist/firefox",
+    "sign:firefox": "web-ext sign -s dist/firefox --channel=listed"
+  },
+  "devDependencies": {
+    "web-ext": "^8.3.0"
   }
 }

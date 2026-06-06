@@ -21,27 +21,45 @@ jobs:
           manifest-file: .release-please-manifest.json
 
       # Everything below runs only when a release was just created.
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 20
+
       - name: Validate sources
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          for f in src/*.js; do node --check "$f"; done
+          for f in src/*.js scripts/*.mjs; do node --check "$f"; done
           node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8'))"
 
-      - name: Build store package (strips localhost host permissions)
+      - name: Build store packages (dist/chrome + dist/firefox, localhost stripped)
         if: ${{ steps.release.outputs.release_created }}
         run: node scripts/build-store.mjs
 
-      - name: Package extension zip
+      - name: Lint Firefox package (AMO gate)
+        if: ${{ steps.release.outputs.release_created }}
+        run: npx --yes web-ext@latest lint -s dist/firefox
+
+      - name: Package extension zips (Chrome + Firefox)
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          cd dist
-          zip -r "../dartmeter-autodarts-bridge-v${{ steps.release.outputs.version }}.zip" \
-            manifest.json src icons LICENSE README.md
+          v="${{ steps.release.outputs.version }}"
+          (cd dist/chrome && zip -r "../../dartmeter-autodarts-bridge-chrome-v${v}.zip" .)
+          (cd dist/firefox && zip -r "../../dartmeter-autodarts-bridge-firefox-v${v}.zip" .)
 
-      - name: Attach zip to release
+      - name: Attach zips to release
         if: ${{ steps.release.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload "${{ steps.release.outputs.tag_name }}" \
             dartmeter-autodarts-bridge-*.zip --clobber
+
+      # Submits the new version to AMO for listing. Runs only when AMO API
+      # credentials are configured as repo secrets; otherwise skipped silently.
+      - name: Submit to addons.mozilla.org
+        if: ${{ steps.release.outputs.release_created && env.WEB_EXT_API_KEY != '' }}
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: npx --yes web-ext@latest sign -s dist/firefox --channel=listed

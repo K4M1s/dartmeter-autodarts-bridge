@@ -1,17 +1,25 @@
 // Service worker. Bridges the two tabs: relays throw/board envelopes from the
 // autodarts tab to every open dartmeter tab, and caches the last "ready" so a
 // freshly-opened dartmeter tab can learn the connection state on handshake.
-importScripts('shared.js');
+// In Chrome the background runs as a service worker (importScripts available);
+// in Firefox it's an event page where shared.js is loaded via background.scripts
+// ahead of this file, so importScripts is undefined and must be skipped.
+if (typeof importScripts === 'function') importScripts('shared.js');
+
+// Firefox's `chrome.*` is callback-only; `browser.*` returns promises. Chrome
+// has no `browser`, but its `chrome.*` returns promises under MV3. Alias to the
+// promise-returning namespace on whichever browser we're on.
+const api = globalThis.browser ?? globalThis.chrome;
 
 const { HEARTBEAT_GAP_MS, DARTMETER_MATCHES } = self.DM_BRIDGE;
 
 // Debug logging, off unless enabled from the service-worker console:
-//   chrome.storage.local.set({ dmBridgeDebug: true })
+//   api.storage.local.set({ dmBridgeDebug: true })
 let DEBUG = false;
-chrome.storage.local.get('dmBridgeDebug').then((v) => {
+api.storage.local.get('dmBridgeDebug').then((v) => {
   DEBUG = !!v.dmBridgeDebug;
 });
-chrome.storage.onChanged.addListener((changes, area) => {
+api.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.dmBridgeDebug) DEBUG = !!changes.dmBridgeDebug.newValue;
 });
 function debug(...args) {
@@ -19,19 +27,19 @@ function debug(...args) {
 }
 
 function fanOutToDartMeter(envelope) {
-  chrome.tabs.query({ url: DARTMETER_MATCHES }, (tabs) => {
+  api.tabs.query({ url: DARTMETER_MATCHES }, (tabs) => {
     debug('fan-out', envelope.type, 'to', tabs.length, 'dartmeter tab(s)');
     for (const tab of tabs) {
       if (tab.id == null) continue;
-      chrome.tabs.sendMessage(tab.id, envelope).catch(() => {});
+      api.tabs.sendMessage(tab.id, envelope).catch(() => {});
     }
   });
 }
 
-chrome.runtime.onMessage.addListener((envelope, sender, sendResponse) => {
+api.runtime.onMessage.addListener((envelope, sender, sendResponse) => {
   // Handshake query from a dartmeter content script: report cached readiness.
   if (envelope && envelope.type === 'query-ready') {
-    chrome.storage.session.get('lastReady').then(({ lastReady }) => {
+    api.storage.session.get('lastReady').then(({ lastReady }) => {
       const fresh = typeof lastReady === 'number' && Date.now() - lastReady < HEARTBEAT_GAP_MS;
       debug('query-ready ->', fresh);
       sendResponse({ ready: fresh });
@@ -47,7 +55,7 @@ chrome.runtime.onMessage.addListener((envelope, sender, sendResponse) => {
   }
 
   if (envelope.type === 'ready') {
-    chrome.storage.session.set({ lastReady: Date.now() });
+    api.storage.session.set({ lastReady: Date.now() });
   }
   fanOutToDartMeter(envelope);
 });

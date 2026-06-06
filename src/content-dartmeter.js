@@ -4,6 +4,8 @@
 (() => {
   const { EXT_SOURCE, APP_SOURCE } = self.DM_BRIDGE;
   const origin = location.origin;
+  // Promise-returning extension API namespace (browser.* on Firefox, chrome.* on Chrome).
+  const api = globalThis.browser ?? globalThis.chrome;
 
   // Debug logging, off unless: localStorage.setItem('dm-bridge-debug', '1')
   function debug(...args) {
@@ -24,7 +26,7 @@
   }
 
   // Relayed throw/board/ready envelopes from the autodarts tab (via background).
-  chrome.runtime.onMessage.addListener((envelope) => {
+  api.runtime.onMessage.addListener((envelope) => {
     if (!envelope || !envelope.type) return;
     postToPage(envelope.type, envelope.payload);
   });
@@ -37,7 +39,7 @@
     if (!data || data.source !== APP_SOURCE || data.type !== 'hello') return;
     debug('app hello received -> querying readiness');
     try {
-      chrome.runtime.sendMessage({ type: 'query-ready' }).then((res) => {
+      api.runtime.sendMessage({ type: 'query-ready' }).then((res) => {
         if (res && res.ready) postToPage('ready', { version: self.DM_BRIDGE.VERSION });
       }).catch(() => {});
     } catch {
