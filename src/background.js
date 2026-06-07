@@ -47,9 +47,9 @@ api.runtime.onMessage.addListener((envelope, sender, sendResponse) => {
     return true; // async sendResponse
   }
 
-  // Otherwise this came from the autodarts tab. Only accept from autodarts.io.
+  // Otherwise this came from the autodarts tab. Only accept from play.autodarts.io.
   const from = sender.tab && sender.tab.url;
-  if (!from || !/^https:\/\/([a-z0-9-]+\.)?autodarts\.io\//.test(from)) {
+  if (!from || !/^https:\/\/play\.autodarts\.io\//.test(from)) {
     debug('rejected message from non-autodarts sender', from);
     return;
   }
