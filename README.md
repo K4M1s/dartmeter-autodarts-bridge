@@ -56,6 +56,7 @@ bridges them. DartMeter shows a connection indicator in Settings.
 | `src/background.js` | service worker (Chrome) / event page (Firefox) | Fans out throws to dartmeter tab(s); caches last “ready” for handshake |
 | `src/content-dartmeter.js` | dartmeter.com isolated world | Posts throws into the page with the page origin; answers the app handshake |
 | `src/shared.js` | both isolated worlds | Shared constants (mirrored in DartMeter’s `lib/autodarts.ts`) |
+| `src/popup.html` + `src/popup.js` | toolbar popup | Grant/revoke the bridge on a local board-manager site (see below) |
 
 ## Install (unpacked)
 
@@ -94,6 +95,27 @@ not run. Build the Firefox package first, then load it temporarily:
 
 > Temporary add-ons are removed when Firefox restarts. A permanent install comes
 > from the signed AMO listing (see [Releases](#releases)).
+
+## Allowing a local board-manager site
+
+By default the bridge only runs on `https://play.autodarts.io`. Some setups score
+through the **local board manager**, which autodarts opens on a LAN address such
+as `http://192.168.0.121` — the bridge can't inject there out of the box, so
+DartMeter stays on **waiting**.
+
+To allow such a page:
+
+1. Open the board-manager page (the `http://<lan-ip>…` one).
+2. Click the **DartMeter Bridge** toolbar icon → **Allow on this site**.
+3. Accept the browser's native permission prompt. The tab reloads and scoring
+   connects.
+
+The grant is **per-site, persistent, and revocable**: the popup lists every
+allowed site with a **Remove** button. This uses an *optional* `http://*/*` host
+permission that does nothing until you click Allow — the extension still never
+touches your autodarts login, and only forwards throw data, exactly as on
+`play.autodarts.io`. Only `http://` board pages can be allowed (the LAN board
+manager is plaintext http); `https://` LAN boards are out of scope.
 
 ## Status & caveats
 

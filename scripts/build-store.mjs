@@ -16,7 +16,9 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 const LOCALHOST = ['http://localhost/*', 'http://127.0.0.1/*'];
 const DIST = 'dist';
 const GECKO_ID = 'dartmeter-autodarts-bridge@k4m1s';
-const FIREFOX_MIN_VERSION = '115.0'; // current ESR; supports MV3 + storage.session
+// 128 (ESR) is the floor for optional_host_permissions, which the "allow a local
+// board-manager site" popup relies on. Also covers MV3 + storage.session.
+const FIREFOX_MIN_VERSION = '128.0';
 
 rmSync(DIST, { recursive: true, force: true });
 
