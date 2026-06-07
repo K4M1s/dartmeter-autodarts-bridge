@@ -11,7 +11,8 @@
     "128": "icons/icon-128.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "scripting"
   ],
   "host_permissions": [
     "https://play.autodarts.io/*",
@@ -19,6 +20,17 @@
     "http://localhost/*",
     "http://127.0.0.1/*"
   ],
+  "optional_host_permissions": [
+    "http://*/*"
+  ],
+  "action": {
+    "default_title": "DartMeter Bridge",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
   "background": {
     "service_worker": "src/background.js"
   },
@@ -52,7 +64,8 @@
         "src/inject-autodarts.js"
       ],
       "matches": [
-        "https://play.autodarts.io/*"
+        "https://play.autodarts.io/*",
+        "http://*/*"
       ]
     }
   ]

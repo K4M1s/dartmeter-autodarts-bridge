@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DartMeter Bridge</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1a1a1a;
+        --muted: #6b7280;
+        --border: #d1d5db;
+        --accent: #16a34a;
+        --accent-fg: #ffffff;
+        --danger: #dc2626;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #f3f4f6;
+          --muted: #9ca3af;
+          --border: #3f3f46;
+        }
+      }
+      body {
+        font: 13px/1.4 system-ui, sans-serif;
+        color: var(--fg);
+        margin: 0;
+        width: 280px;
+        padding: 14px;
+      }
+      h1 {
+        font-size: 13px;
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      h1 img { width: 18px; height: 18px; }
+      .section { margin-bottom: 14px; }
+      .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+      .host { font-weight: 600; word-break: break-all; }
+      .note { color: var(--muted); }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--fg);
+        padding: 6px 10px;
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-fg);
+        width: 100%;
+        margin-top: 8px;
+      }
+      button.primary:disabled { opacity: .5; cursor: default; }
+      .allowed-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 0;
+        border-top: 1px solid var(--border);
+      }
+      .allowed-row .host { font-weight: 500; }
+      button.remove {
+        border-color: var(--danger);
+        color: var(--danger);
+        padding: 2px 8px;
+        line-height: 1.2;
+      }
+      .empty { color: var(--muted); font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <h1><img src="../icons/icon-32.png" alt="" />DartMeter Bridge</h1>
+
+    <div class="section" id="current"></div>
+
+    <div class="section">
+      <div class="label">Allowed board sites</div>
+      <div id="allowed"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
