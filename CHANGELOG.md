@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.3.0...v0.3.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* narrow host permission to play.autodarts.io ([be1a919](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/be1a919e8d4e8303ea82bd96484cffe45981e156))
+* narrow host permission to play.autodarts.io ([01b2a17](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/01b2a17ec1cb042f96ebe5443712b53d0486ee65))
+
 ## [0.3.0](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.2.0...v0.3.0) (2026-06-06)
 
 

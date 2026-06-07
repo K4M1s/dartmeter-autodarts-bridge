@@ -10,7 +10,7 @@
 (() => {
   const INJECT_SOURCE = '__dm_ad_inject__';
   const HEARTBEAT_MS = 5_000;
-  const VERSION = '0.3.0'; // x-release-please-version
+  const VERSION = '0.3.1'; // x-release-please-version
   const SUBSCRIBE_MATCH = 'ms/v0/subscribe';
 
   // Debug logging, off unless the user opts in on the autodarts.io page:
