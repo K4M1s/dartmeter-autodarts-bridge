@@ -37,7 +37,12 @@
     if (e.source !== window || e.origin !== origin) return;
     const data = e.data;
     if (!data || data.source !== APP_SOURCE || data.type !== 'hello') return;
-    debug('app hello received -> querying readiness');
+    debug('app hello received -> announcing presence, querying readiness');
+    // Presence ack: this content script is injected, which by itself proves the
+    // extension is installed — independent of whether the autodarts board socket
+    // is live. Lets the app tell "not installed" from "installed but board
+    // manager not open" (it would otherwise see silence in both cases).
+    postToPage('present', { version: self.DM_BRIDGE.VERSION });
     try {
       api.runtime.sendMessage({ type: 'query-ready' }).then((res) => {
         if (res && res.ready) postToPage('ready', { version: self.DM_BRIDGE.VERSION });
