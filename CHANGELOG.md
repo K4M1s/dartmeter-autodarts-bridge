@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.3.2...v0.3.3) (2026-06-07)
+
+
+### Bug Fixes
+
+* shorten manifest description under chrome 132-char limit ([#12](https://github.com/K4M1s/dartmeter-autodarts-bridge/issues/12)) ([20315e3](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/20315e3b155d3a4174c8c87bd74efe70cdb8ef23))
+
 ## [0.3.2](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.3.1...v0.3.2) (2026-06-07)
 
 
