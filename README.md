@@ -5,9 +5,6 @@ throws from your [play.autodarts.io](https://play.autodarts.io) session into
 [DartMeter](https://dartmeter.com), so you can use DartMeter's game modes with
 autodarts' camera scoring.
 
-> Unaffiliated with autodarts. "autodarts" is used only to describe what this
-> extension is compatible with.
-
 It is published as a **separate, auditable repo on purpose**: the extension is
 the only piece that touches your autodarts session, so you can read exactly what
 it does before trusting it. DartMeter itself never sees your autodarts login.
@@ -102,12 +99,17 @@ not run. Build the Firefox package first, then load it temporarily:
   parsing. When that happens, throws simply stop arriving and DartMeter falls
   back to manual input; the fix is localized to `handleFrame` in
   `inject-autodarts.js`.
-- This project is unaffiliated with autodarts.
 - Chrome and Firefox are both supported from a single source tree. The extension
   API is accessed through `globalThis.browser ?? globalThis.chrome` so the
   promise-based calls work on Firefox (where bare `chrome.*` is callback-only),
   and `npm run build:store` emits a Firefox-shaped manifest (event-page
   background + `browser_specific_settings.gecko`).
+
+## Affiliation
+
+DartMeter is an independent project and is not affiliated with, endorsed by,
+sponsored by, or associated with Autodarts. Any references to Autodarts or
+play.autodarts.io are provided solely to describe integration and compatibility.
 
 ## Debugging
 
