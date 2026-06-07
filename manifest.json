@@ -15,7 +15,6 @@
   ],
   "host_permissions": [
     "https://play.autodarts.io/*",
-    "https://*.autodarts.io/*",
     "https://dartmeter.com/*",
     "http://localhost/*",
     "http://127.0.0.1/*"
@@ -26,8 +25,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://play.autodarts.io/*",
-        "https://*.autodarts.io/*"
+        "https://play.autodarts.io/*"
       ],
       "js": [
         "src/shared.js",
@@ -54,8 +52,7 @@
         "src/inject-autodarts.js"
       ],
       "matches": [
-        "https://play.autodarts.io/*",
-        "https://*.autodarts.io/*"
+        "https://play.autodarts.io/*"
       ]
     }
   ]
