@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.3.1...v0.3.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* announce extension presence on app handshake ([#10](https://github.com/K4M1s/dartmeter-autodarts-bridge/issues/10)) ([7586d6b](https://github.com/K4M1s/dartmeter-autodarts-bridge/commit/7586d6badb989e18548e048b0a3135a522489a91))
+
 ## [0.3.1](https://github.com/K4M1s/dartmeter-autodarts-bridge/compare/v0.3.0...v0.3.1) (2026-06-07)
 
 
