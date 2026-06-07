@@ -25,5 +25,5 @@ self.DM_BRIDGE = {
     'http://localhost/*',
     'http://127.0.0.1/*',
   ],
-  VERSION: '0.3.0', // x-release-please-version
+  VERSION: '0.3.1', // x-release-please-version
 };

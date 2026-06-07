@@ -1,6 +1,6 @@
 {
   "name": "dartmeter-autodarts-bridge",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Browser extension that forwards autodarts.io camera-detected throws into DartMeter.",
   "license": "MIT",
   "private": true,
